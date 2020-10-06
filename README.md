@@ -22,3 +22,6 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+git push -f https://github.com/Pito0713/Demo_product.git master:gh-pages

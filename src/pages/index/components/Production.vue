@@ -1,18 +1,15 @@
 <template>
-  <div class="slider">
-    <categoryslider style="flex:25%"/>
-    <productItem  style="flex:75%"/>
+  <div >
+    <productItem class="slider"/>
   </div>
 </template>
 
 <script>
 import productItem from '../components/productItem.vue'
-import categoryslider from '../components/categoryslider.vue'
 
 export default {
   components: {
-    productItem,
-    categoryslider
+    productItem
   }
 }
 </script>

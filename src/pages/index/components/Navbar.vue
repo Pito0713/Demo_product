@@ -92,7 +92,7 @@ export default {
     border-right: 1px var(--border-color) solid;
     z-index: 99;
     background-color: var(--background-color);
-    width: 40%;
+    width: 30%;
   }
   .navBranch ul {
     flex-direction: column;

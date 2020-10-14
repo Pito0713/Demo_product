@@ -1,17 +1,35 @@
 <template>
   <div>
-    <div>
-      <a>商品</a>
-      <div class="Product">
-        <div v-for="Product in Products" :key="Product.no" class="ProductItem">
+    <div class="categoryslider" style="flex:25%">
+        <ul>
+            <li>
+                <a @click="CatchProductItem('All')">熱銷</a>
+            </li>
+            <li>
+                <a @click="CatchProductItem('new')">新品</a>
+            </li>
+            <li>
+                <a @click="CatchProductItem('earing')">耳環</a>
+            </li>
+            <li>
+                <a @click="CatchProductItem('necklace')">戒指</a>
+            </li>
+            <li>
+                <a @click="CatchProductItem('necklace')">項鍊</a>
+            </li>
+        </ul>
+      </div>
+    <div  style="flex:75%">
+      <div class="Product" id="Product">
+        <div v-for="(Product,index) in Products" :key="Product.name+index" class="ProductItem">
           <div class="ProductItemInfo">
-            <a style="font-size: 1.8vw;">{{Product.name}}</a>
-            <a style="float:right" @click="showUp(Product.no)">
-              <i class="far fa-heart" :class="{fas : Product.add }"></i>
-            </a>
+            <a style="font-size:1.5vw;">{{Product.name}}</a>
             <br />
             <div style="padding-top:1vw;">
-              <a style="font-size: 1.5vw;">NT: {{Product.price}}</a>
+              <a style="font-size:1.4vw;">NT: {{Product.price}}</a>
+              <a style="float:right; padding-top:5px; padding-right:10px;" @click="showUp(Product.no)">
+                <i class="far fa-heart" :class="{fas : Product.add }"></i>
+              </a>
             </div>
           </div>
           <div>
@@ -19,8 +37,22 @@
           </div>
         </div>
       </div>
-      <div id="productPage"></div>
-    </div>
+        <div class="productPage">
+          <div class="pagination">
+              <div @click="pagination(catchData,currentPage-1)">
+                <a>上一頁</a>
+              </div>
+              <div class="pagination" id="productPage">
+                <div v-for="pageTotal in pageTotals" :key="pageTotal[i]" @click="pagination(catchData,pageTotal)">
+                  <a>{{pageTotal}}</a>
+                </div>
+              </div>
+              <div @click="pagination(catchData,currentPage+1)">
+                <a>下一頁</a>
+              </div>
+          </div>
+        </div>
+      </div>
   </div>
 </template>
 
@@ -29,32 +61,34 @@ export default {
   data: function () {
     return {
       Products: [],
-      ProdcutData: ''
+      pageTotals: [],
+      paginationTotal: '',
+      currentPage: '',
+      datapage: 8,
+      CatchProductId: '',
+      catchData: []
     }
   },
   methods: {
     showUp (i) {
-      this.Products[i].add = !this.Products[i].add
-      console.log(this.Products[i].add)
+      this.ProdcutData[i].add = !this.ProdcutData[i].add
     },
     pagination (ProdcutData, currentPage) {
-      // 全部資料總數
-      const dataTotal = ProdcutData.length
-
-      // 每一頁顯示幾筆資料。
-      var datapage
-      datapage = 8
-      // 總共有幾頁//
-      const pageTotal = Math.ceil(dataTotal / datapage)
-      // 當前比總頁數大的，當前等於總頁數 //防止剛好進位
-      if (currentPage > pageTotal) {
-        currentPage = pageTotal
+      if (currentPage > this.paginationTotal) {
+        document.getElementById('Product').innerHTML = ''
+        currentPage = this.paginationTotal
+      } else {
+        document.getElementById('Product').innerHTML = ''
       }
-
+      if (currentPage <= 0) {
+        currentPage = 1
+      }
+      // 全部資料總數
+      // 當前比總頁數大的，當前等於總頁數 //防止剛好進位
       // 最小 （當前)1*(單頁資料)4 - 4(起始頁資料) + 1 起始至少為1
-      const minData = currentPage * datapage - datapage + 1
+      const minData = currentPage * this.datapage - this.datapage + 1
       // 最大
-      const maxData = currentPage * datapage
+      const maxData = currentPage * this.datapage
       // 當前頁面(1) 比 minData(例如：1) 大且又小於 maxData(例如：4) 就push進去新陣列。
       //    建立新陣列//
       for (this.i = 0; this.i <= ProdcutData.length; this.i++) {
@@ -62,21 +96,37 @@ export default {
           this.Products.push(ProdcutData[this.i - 1])
         }
       }
-      //    建立頁面變數
-      const page = {
-        pageTotal, //   整頁數
-        currentPage //  當前
-      }
-      this.pageSelect(page)
+      document.body.scrollTop = 0
+      this.currentPage = currentPage
+      //    console.log(this.paginationTotal)
+      //    console.log(this.ProdcutData)
+      //    console.log(this.pageTotals)
+      //    console.log(this.Products)
     },
-    pageSelect (page) {
-      let str = ''
-      //    寫入所有頁數
-      for (let i = 1; i <= page.pageTotal; i++) {
-        str += `<a data-page="${i}">${i}</a>`
+    pageSelect () {
+      const dataTotal = this.catchData.length
+      // 總共有幾頁//
+      document.getElementById('productPage').innerHTML = ''
+      this.paginationTotal = Math.ceil(dataTotal / this.datapage)
+      for (this.i = 1; this.i <= this.paginationTotal; this.i++) {
+        this.pageTotals.push(this.i)
       }
-      //    寫入變數str所有資料
-      document.getElementById('productPage').innerHTML = str
+    },
+    CatchProductItem (Id) {
+      if (Id === 'All') {
+        this.catchData = this.ProdcutData
+      } else {
+        this.catchData = this.ProdcutData.filter( //    用id 屬性篩選我要的
+          function (item) {
+            return item.id === Id
+          }
+        )
+        console.log(Id)
+        console.log(this.catchData)
+      }
+      document.getElementById('Product').innerHTML = ''
+      this.pagination(this.catchData, 1) // 用抓到的資料帶回
+      this.pageSelect()
     }
   },
   mounted () {
@@ -85,26 +135,40 @@ export default {
         return res.json()
       })
       .then(Products => {
-        this.pagination(Products, 1)
+        this.ProdcutData = Products
+        this.CatchProductItem('All')
       })
   }
 }
 </script>
 
 <style scoped lang="scss">
+.categoryslider{
+    display: block;
+    position: relative;
+    padding-top:5vw;
+    li{
+        padding: 1.5vw 0;
+    }
+    li:hover{
+        border-bottom:1px var(--border-color) solid;
+    }
+    a{
+        font-size: 1.5vw;
+    }
+}
 .Product {
   display: flex;
   position: relative;
   flex-wrap: wrap;
   padding-top: 2vw;
-  margin-bottom: 8vw;
+  margin: 5vw 0;
 }
 .ProductItem {
   display: flex;
   flex-direction: column;
-  padding: 0.25vw;
-  margin: 0.5vw;
-  flex: 45%;
+  margin: 0.75vw;
+  width: 45%;
   img {
     max-width: 100%;
     max-height: 100%;
@@ -112,12 +176,38 @@ export default {
 }
 .ProductItemInfo {
   text-align: start;
-  padding: 0.5vw;
-  a {
-    font-size: 1.2vw;
-    color: var(--product-color);
+  color: var(--product-color);
+  overflow:hidden;
+  text-overflow: ellipsis;
+  a{
+    white-space:nowrap;
   }
 }
+.productPage{
+    display: flex;
+    justify-content: center;
+    .pagination{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        a{
+            padding: 2vw;
+        }
+    }
+}
 @media screen and (max-width: 769px) {
+    .ProductItem {
+        width: 40%;
+    }
+    .ProductItemInfo{
+        a{
+            font-size: 1vw;
+        }
+    }
+    .pagination{
+        a{
+            font-size: 1.5vw;
+        }
+    }
 }
 </style>

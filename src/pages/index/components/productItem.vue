@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="categoryslider" style="flex:25%">
-        <ul>
+    <div class="categoryslider" style="flex:25%" >
+        <ul id="categoryLIst">
             <li>
                 <a @click="CatchProductItem('All')">熱銷</a>
             </li>
@@ -12,28 +12,31 @@
                 <a @click="CatchProductItem('earing')">耳環</a>
             </li>
             <li>
-                <a @click="CatchProductItem('necklace')">戒指</a>
-            </li>
-            <li>
                 <a @click="CatchProductItem('necklace')">項鍊</a>
             </li>
         </ul>
       </div>
     <div  style="flex:75%">
+      <div class="filterButton">
+        <button @click="sortPrice()">價錢高低</button>
+        <button>購買次數</button>
+        <button @click="sortDate()">上架時間</button>
+      </div>
       <div class="Product" id="Product">
-        <div v-for="(Product,index) in Products" :key="Product.name+index" class="ProductItem">
+        <div v-for="(Product,index) in Products" :key="Product[1]+index" class="ProductItem">
           <div class="ProductItemInfo">
-            <a style="font-size:1.5vw;">{{Product.name}}</a>
+            <a style="font-size:1.5vw;">{{Product[2]}}</a>
+            <a style="float:right; padding-top:5px; padding-right:10px;" @click="showUp(Product[0])">
+              <i class="far fa-heart" :class="{fas : Product[5] }"></i>
+            </a>
             <br />
-            <div style="padding-top:1vw;">
-              <a style="font-size:1.4vw;">NT: {{Product.price}}</a>
-              <a style="float:right; padding-top:5px; padding-right:10px;" @click="showUp(Product.no)">
-                <i class="far fa-heart" :class="{fas : Product.add }"></i>
-              </a>
+            <div style="padding-top:1vw; display:flex; justify-content: space-between;">
+              <a style="font-size:1.4vw;">NT: {{Product[3]}}</a>
+              <a>{{Product[9]}}</a>
             </div>
           </div>
-          <div>
-            <img :src="Product.img" />
+          <div class="ProductImg">
+            <img :src="Product[7]" />
           </div>
         </div>
       </div>
@@ -57,6 +60,7 @@
 </template>
 
 <script>
+const moment = require('moment')
 export default {
   data: function () {
     return {
@@ -64,14 +68,18 @@ export default {
       pageTotals: [],
       paginationTotal: '',
       currentPage: '',
-      datapage: 8,
+      datapage: 12,
       CatchProductId: '',
-      catchData: []
+      catchData: [],
+      sortPriceData: [],
+      sortDateData: [],
+      sortRe: true
     }
   },
   methods: {
     showUp (i) {
-      this.ProdcutData[i].add = !this.ProdcutData[i].add
+      this.ProdcutData[i][5] = !this.ProdcutData[i][5]
+      this.pageSelect()
     },
     pagination (ProdcutData, currentPage) {
       if (currentPage > this.paginationTotal) {
@@ -96,7 +104,12 @@ export default {
           this.Products.push(ProdcutData[this.i - 1])
         }
       }
-      document.body.scrollTop = 0
+      if (this.currentPage < this.paginationTotal) {
+        if (this.currentPage > 0) {
+          document.body.scrollTop = 0
+        }
+        console.log(this.currentPage)
+      }
       this.currentPage = currentPage
       //    console.log(this.paginationTotal)
       //    console.log(this.ProdcutData)
@@ -114,23 +127,75 @@ export default {
     },
     CatchProductItem (Id) {
       if (Id === 'All') {
-        this.catchData = this.ProdcutData
+        this.catchData = this.ProdcutData.filter( //    用id 屬性篩選我要的
+          function (item) {
+            return item[0] !== '' // 篩掉空值
+          }
+        )
       } else {
         this.catchData = this.ProdcutData.filter( //    用id 屬性篩選我要的
           function (item) {
-            return item.id === Id
+            return item[1] === Id
           }
         )
         console.log(Id)
-        console.log(this.catchData)
+      }
+      for (let i = 0; i < this.catchData.length; i++) {
+        this.catchData[i][9] = moment(this.catchData[i][9]).format('MM/DD/YYYY')
       }
       document.getElementById('Product').innerHTML = ''
       this.pagination(this.catchData, 1) // 用抓到的資料帶回
       this.pageSelect()
+      console.log(this.catchData)
+    },
+    sort0 () {
+      this.catchData.sort(function (a, b) {
+        return a[0] - b[0]
+      })
+    },
+    sortPrice () {
+      if (this.sortRe === true) {
+        this.catchData.sort(function (a, b) {
+          return a[3] - b[3]
+        })
+        console.log(this.catchData)
+        this.sortRe = !this.sortRe
+      } else {
+        this.catchData.sort(function (a, b) {
+          return a[3] - b[3]
+        })
+        this.catchData.reverse()
+        console.log(this.catchData)
+        this.sortRe = !this.sortRe
+      }
+      console.log(this.sortRe)
+      document.getElementById('Product').innerHTML = ''
+      this.pagination(this.catchData, 1) // 用抓到的資料帶回
+      this.sort0()
+    },
+    sortDate () {
+      if (this.sortRe === true) {
+        this.catchData.sort(function (a, b) {
+          return a[9] < b[9] ? 1 : -1
+        })
+        console.log(this.catchData)
+        this.sortRe = !this.sortRe
+      } else {
+        this.catchData.sort(function (a, b) {
+          return a[9] < b[9] ? 1 : -1
+        })
+        this.catchData.reverse()
+        console.log(this.catchData)
+        this.sortRe = !this.sortRe
+      }
+      console.log(this.sortRe)
+      document.getElementById('Product').innerHTML = ''
+      this.pagination(this.catchData, 1) // 用抓到的資料帶回
+      this.sort0()
     }
   },
   mounted () {
-    fetch('https://pito0713.github.io/Fetch/DemoProdcut.json')
+    fetch('https://script.google.com/macros/s/AKfycbwzGM7BJ8SnGD626ebzQi3xGdBsJzUlOSdiDIkMmBhplN65FtQ/exec')
       .then(res => {
         return res.json()
       })
@@ -146,7 +211,7 @@ export default {
 .categoryslider{
     display: block;
     position: relative;
-    padding-top:5vw;
+    padding-top:10vw;
     li{
         padding: 1.5vw 0;
     }
@@ -154,21 +219,31 @@ export default {
         border-bottom:1px var(--border-color) solid;
     }
     a{
-        font-size: 1.5vw;
+        font-size: 1.8vw;
     }
 }
 .Product {
   display: flex;
   position: relative;
   flex-wrap: wrap;
-  padding-top: 2vw;
-  margin: 5vw 0;
+}
+.filterButton {
+    display: flex;
+    justify-content:flex-end;
+    align-items: center;
+    button {
+        margin: 1vw 2vw;
+        background-color: #ffffff;
+        border: var(--border-color) 1px solid;
+        color: var(--plat-color);
+        font-size: 1.2vw;
+    }
 }
 .ProductItem {
   display: flex;
   flex-direction: column;
   margin: 0.75vw;
-  width: 45%;
+  width: 30%;
   img {
     max-width: 100%;
     max-height: 100%;
@@ -194,6 +269,12 @@ export default {
             padding: 2vw;
         }
     }
+}
+.ProductImg {
+    height: 20vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 @media screen and (max-width: 769px) {
     .ProductItem {

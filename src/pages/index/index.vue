@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-        <!--<a href="test.html">跳转到白菜页面</a>-->
+    <a href="test.html">跳转到白菜页面</a>
     <Navbar  id="nav"/>
     <Production  id="Production"/>
     <Footer />
@@ -44,6 +44,22 @@ export default {
         Production.style.marginTop = '0px'
         nav.style.position = 'relative'
         nav.style.backgroundColor = '#ffffff'
+      }
+      var categoryLIst = document.getElementById('categoryLIst')
+      //  var navFix = document.getElementById('navFix')
+      var categoryHeight = categoryLIst.offsetHeight
+      if (this.scrollTop > categoryHeight) {
+        categoryLIst.style.backgroundColor = 'var(--background-color)'
+        categoryLIst.style.position = 'fixed'
+        categoryLIst.style.width = '25%'
+        categoryLIst.style.top = '69px'
+        categoryLIst.style.opacity = '0.7'
+      } else {
+        categoryLIst.style.position = 'relative'
+        categoryLIst.style.backgroundColor = '#ffffff'
+        categoryLIst.style.width = '100%'
+        categoryLIst.style.top = '0px'
+        categoryLIst.style.opacity = '1'
       }
     }
   }

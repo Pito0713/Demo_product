@@ -19,6 +19,6 @@ export default {
   display: flex;
   position: relative;
   padding-top: 2vw;
-  margin: 5vw 0;
+  margin: 5vw 3vw;
 }
 </style>

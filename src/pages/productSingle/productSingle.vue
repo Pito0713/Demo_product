@@ -1,14 +1,13 @@
 <template>
   <div id="app">
-    <a href="productSingle.vue">跳转到白菜页面</a>
     <Navbar  id="nav"/>
-    <Production  id="Production"/>
+    <productInfo  id="Production"/>
     <Footer />
   </div>
 </template>
 <script>
 import Navbar from './components/Navbar.vue'
-import Production from './components/Production.vue'
+import productInfo from './components/productInfo.vue'
 import Footer from './components/Footer.vue'
 
 export default {
@@ -20,7 +19,7 @@ export default {
   },
   components: {
     Navbar,
-    Production,
+    productInfo,
     Footer
   },
   mounted () {
@@ -68,12 +67,14 @@ export default {
 
 <style>
 @import './css/container.css';
+@import './css/css-variable.css';
 #app {
-  font-family:var(--font-Pragati);
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: var(--text-color);
-  background-color: var(--product-bg-color)
+  background-color: var(--product-bg-color);
+  margin-top: 60px;
 }
 </style>

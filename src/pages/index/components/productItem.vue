@@ -15,10 +15,10 @@
                 <a @click="CatchProductItem('necklace')">項鍊</a>
             </li>
             <div class="cartSlider">
-              <a>購物車</a>
-              <a v-if="CartInNothing">沒買東西</a>
+              <a>待會再看</a><br />
+              <a v-if="CartInNothing">還沒有看到喜歡的！</a>
               <div v-for="(Product,index) in cartData" :key="Product[1]+index">
-                <a style="font-size:1.2vw;">{{Product[2]}}</a>
+                <a style="font-size:1.2vw;"  @click="backData (Product[0])">{{Product[2]}}</a>
               </div>
             </div>
         </ul>
@@ -37,17 +37,17 @@
       </div>
       <div class="Product" id="Product">
         <div v-for="(Product,index) in Products" :key="Product[1]+index" class="ProductItem">
-          <div class="ProductItemInfo" @click="backData (Product[0])">
-            <div class="ProductImg">
+          <div class="ProductItemInfo">
+            <div class="ProductImg"  @click="backData (Product[0])">
               <img :src="Product[7]" />
             </div>
-            <a style="font-size:1.2vw;">{{Product[2]}}</a>
-            <a style="float:right; margin:3px 5px;" >
-              <i class="far fa-heart" :class="{fas : Product[5] }" @click="addCart(Product[0])"></i>
-            </a>
+            <a style="font-size:1.2vw;"  @click="backData (Product[0])">{{Product[2]}}</a>
             <br />
             <div style="padding-top:1vw; display:flex; justify-content: space-between;">
               <a style="font-size:1.4vw;">NT: {{Product[3]}}</a>
+              <a style="float:right; margin:3px 5px;" >
+                <i class="far fa-heart" :class="{fas : Product[5] }" @click="addCart(Product[0])"></i>
+              </a>
             </div>
           </div>
           <a style="font-size:0.5vw">上架：{{Product[9]}}</a>
@@ -91,10 +91,10 @@ export default {
     }
   },
   watch: {
-    zcartData: function () {
+    cartData: function () {
       if (this.cartData[0] === undefined) {
         this.CartInNothing = !this.CartInNothing
-        console.log(this.CartInNothing)
+        // console.log(this.CartInNothing)
       }
     }
   },
@@ -126,7 +126,7 @@ export default {
         if (this.currentPage > 0) {
           document.body.scrollTop = 0
         }
-        console.log(this.currentPage)
+        // console.log(this.currentPage)
       }
       this.currentPage = currentPage
     },
@@ -152,7 +152,7 @@ export default {
             return item[1] === Id
           }
         )
-        console.log(Id)
+        // console.log(Id)
       }
       for (let i = 0; i < this.catchData.length; i++) {
         this.catchData[i][9] = moment(this.catchData[i][9]).format('MM/DD/YYYY')
@@ -160,7 +160,7 @@ export default {
       document.getElementById('Product').innerHTML = ''
       this.pagination(this.catchData, 1) // 用抓到的資料帶回
       this.pageSelect()
-      console.log(this.catchData)
+      // console.log(this.catchData)
     },
     sort0 () {
       this.catchData.sort(function (a, b) {
@@ -172,17 +172,17 @@ export default {
         this.catchData.sort(function (a, b) {
           return a[3] - b[3]
         })
-        console.log(this.catchData)
+        // console.log(this.catchData)
         this.sortRe = !this.sortRe
       } else {
         this.catchData.sort(function (a, b) {
           return a[3] - b[3]
         })
         this.catchData.reverse()
-        console.log(this.catchData)
+        // console.log(this.catchData)
         this.sortRe = !this.sortRe
       }
-      console.log(this.sortRe)
+      // console.log(this.sortRe)
       document.getElementById('Product').innerHTML = ''
       this.pagination(this.catchData, 1) // 用抓到的資料帶回
       this.pageSelect()
@@ -193,17 +193,17 @@ export default {
         this.catchData.sort(function (a, b) {
           return a[9] < b[9] ? 1 : -1
         })
-        console.log(this.catchData)
+        // console.log(this.catchData)
         this.sortRe = !this.sortRe
       } else {
         this.catchData.sort(function (a, b) {
           return a[9] < b[9] ? 1 : -1
         })
         this.catchData.reverse()
-        console.log(this.catchData)
+        // console.log(this.catchData)
         this.sortRe = !this.sortRe
       }
-      console.log(this.sortRe)
+      // console.log(this.sortRe)
       document.getElementById('Product').innerHTML = ''
       this.pagination(this.catchData, 1) // 用抓到的資料帶回
       this.pageSelect()
@@ -240,7 +240,7 @@ export default {
         return obj !== undefined
       })
       this.catchData = Realsearched
-      console.log(this.catchData)
+      // console.log(this.catchData)
       document.getElementById('Product').innerHTML = ''
       this.pagination(this.catchData, 1)
       this.pageSelect()
@@ -253,19 +253,12 @@ export default {
       this.pageSelect() // 重新載入
       this.cartData = this.catchData.filter(
         function (item) {
-          return item[5] === true // 篩掉小於值
+          return item[5] === true // 篩掉出true
         }
       )
-      if (this.cartData[0] === undefined) {
-        this.CartInNothing = !this.CartInNothing
-      }
-      console.log(this.cartData)
-      console.log(this.CartInNothing)
-    },
-    addCart1 () {
-      console.log(this.cartData)
     },
     backData (i) {
+      console.log(this.catchData[i])
       var data = [[
         this.catchData[i][0],
         this.catchData[i][1],
@@ -285,10 +278,10 @@ export default {
         name: '工作表1',
         data: data.toString(),
         row: this.catchData[i][0],
-        column: this.catchData[0].length
+        column: this.catchData[i].length
       }
       $.get('https://script.google.com/macros/s/AKfycbzKEwZkfPc610W7d8w8cktq6OO2R8Tfw6GgmHe1aZVGDbkXlGQ/exec', parameter)
-      window.setTimeout(window.location.href = 'productSingle.vue', 2000)
+      window.setTimeout(window.location.href = 'productSingle.html', 2000)
     }
   },
   mounted () {

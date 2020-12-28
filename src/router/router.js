@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
 import index from '../pages/index/index.vue';
-import productSingle from '../pages/productSingle/productSingle.vue';
+import productSingle from '../pages/productSingle/roductSingle.vue';
+
 
 Vue.use(Router);
 
@@ -24,7 +24,7 @@ const routers = [
         name: 'productSingle',
         component: productSingle,
         meta: { requiresAuth: false },
-    },
+    }
 ];
 const router = new Router({
     mode: 'history',

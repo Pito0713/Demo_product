@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <a href="productSingle.vue">跳转到白菜页面</a>
     <Navbar  id="nav"/>
     <Production  id="Production"/>
     <Footer />

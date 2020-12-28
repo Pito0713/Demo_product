@@ -14,7 +14,8 @@ export default {
   name: 'app',
   data: function () {
     return {
-      scrollTop: ''
+      scrollTop: '',
+      isRouterAlive: true
     }
   },
   components: {

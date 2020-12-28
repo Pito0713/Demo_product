@@ -5,8 +5,9 @@
     </div>
     <div class="navBranch" :class="{ navOps: isOpen }">
       <ul>
-        <li class="nav-Item">新品 New</li>
-        <li class="nav-Item">耳環 Earrings</li>
+        <li class="nav-Item">
+          <a href="index.html">耳環 Earrings</a>
+        </li>
         <li class="nav-Item">購物車 Cart</li>
         <li class="nav-Item">會員 mender</li>
       </ul>
